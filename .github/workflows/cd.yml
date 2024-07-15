@@ -19,4 +19,4 @@ jobs:
       - name: Dockerビルドを実行する # docker/build-push-actionも使える
         run: docker build -t ghcr.io/${{ github.repository }}:latest .
       - name: Docker イメージをプッシュする
-        run: docker push ghcr.io/${{ github.repository }}:latest .
+        run: docker push ghcr.io/${{ github.repository }}:latest
