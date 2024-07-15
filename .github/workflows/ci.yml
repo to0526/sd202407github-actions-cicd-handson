@@ -1,0 +1,28 @@
+name: ci
+
+on: # masterブランチに対してプルリクエストがオープンされたことをトリガにして実行
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  ci:
+    name: ci # GitHub Action上で見出しとして設定されるだけ
+    runs-on: ubuntu-latest # ランナーの種類は特にこだわらないのでubuntuを利用
+                           # 使えるランナーの種類 https://docs.github.com/ja/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners
+                           # プリインストールされるツール https://github.com/actions/runner-images?tab=readme-ov-file#available-images
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+      - name: Go の環境をセットアップ
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.2'
+      - name: フォーマットを実行（違反があったらワークフローを失敗させる）
+        run: test -z $(gofmt -l .) # test -z コマンド：後ろの文字列の長さが0のとき終了ステータス0を、それ以外のときは1（異常終了）を返す
+      - name: 静的解析を実行
+        run: go vet ./...
+      - name: テストを実行
+        run: go test
+      - name: ビルドを実行
+        run: go build .
